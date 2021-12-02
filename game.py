@@ -59,6 +59,7 @@ class Hero(object):
     def __init__(self, hero, x, y):
         self.hero = hero
         self.herorect = hero.get_rect()
+        self.damage = 27
         self.x = x
         self.y = y
         self.hp = 100
@@ -77,12 +78,10 @@ class Hero(object):
 
     def move_right(self):
         if maps[self.y][self.x + 1] == '3':
-            self.hp -= random.randint(1, 10)
-            font = Font()
-            if self.hp <= 0:
-                print('GAME OVER!')
-                time.sleep(3)
-                sys.exit()
+            if battle() != True:
+                man.draw_empty()
+                self.x += 1
+                man.draw()
         elif maps[self.y][self.x + 1] != '0':
             man.draw_empty()
             self.x += 1
@@ -90,7 +89,10 @@ class Hero(object):
 
     def move_left(self):
         if maps[self.y][self.x - 1] == '3':
-            pass
+            if battle() != True:
+                man.draw_empty()
+                self.x -= 1
+                man.draw()
         elif maps[self.y][self.x - 1] != '0':
             man.draw_empty()
             self.x -= 1
@@ -98,7 +100,10 @@ class Hero(object):
 
     def move_down(self):
         if maps[self.y+1][self.x] == '3':
-            pass
+            if battle() != True:
+                man.draw_empty()
+                self.y += 1
+                man.draw()
         elif maps[self.y+1][self.x] != '0':
             man.draw_empty()
             self.y += 1
@@ -106,7 +111,10 @@ class Hero(object):
 
     def move_up(self):
         if maps[self.y-1][self.x] == '3':
-            pass
+            if battle() != True:
+                man.draw_empty()
+                self.y -= 1
+                man.draw()
 
         if maps[self.y-1][self.x] != '0':
             man.draw_empty()
@@ -125,6 +133,39 @@ class Enemy(object):
         self.enemyrect.top=self.y * 32
         self.enemyrect.left=self.x * 32
         screen.blit(self.enemy, self.enemyrect)
+
+def battle():
+    fight = False
+    for enemy in enemy_list:
+        if enemy.x == man.x-1 and enemy.y == man.y:
+            enemy.hp -= man.damage
+            man.hp -= random.randint(1, 10)
+            font = Font()
+            fight = True
+        elif enemy.x == man.x+1 and enemy.y == man.y:
+            enemy.hp -= man.damage
+            man.hp -= random.randint(1, 10)
+            font = Font()
+            fight = True
+        elif enemy.x == man.x and enemy.y == man.y-1:
+            enemy.hp -= man.damage
+            man.hp -= random.randint(1, 10)
+            font = Font()
+            fight = True
+        elif enemy.x == man.x and enemy.y == man.y+1:
+            enemy.hp -= man.damage
+            man.hp -= random.randint(1, 10)
+            font = Font()
+            fight = True
+    for enemy in enemy_list:
+        if enemy.hp <= 0:
+            index = enemy_list.index(enemy)
+            enemy_list.pop(index)
+            del enemy
+            fight = False
+
+    return fight
+
 
 
 enemy_list = []
